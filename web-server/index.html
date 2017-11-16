@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tester Assistant</title>
+  <style>
+    #mainDiv {
+      width: 100%;
+      color: black;
+      overflow: auto;
+    }
+
+    p {
+      border: 0;
+      padding: 0;
+      margin: 0.5em;
+    }
+  </style>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+<div id="mainDiv"></div>
+
+<script type="text/javascript">
+
+  const mainDiv = document.getElementById('mainDiv');
+
+  function addStr(str) {
+    const p = document.createElement('p');
+
+    p.innerHTML = str;
+
+//    const textNode = document.createTextNode(str);
+//    p.appendChild(textNode);
+    mainDiv.appendChild(p);
+
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function sendCommand(ws, cmd) {
+    ws.send(JSON.stringify(cmd));
+  }
+
+  const address = 'ws://10.8.0.22:3051';
+
+  //  const address = 'ws://127.0.0.1:3051';
+
+  function startWorld() {
+    const ws = new WebSocket(address);
+
+    ws.addEventListener('open', function (event) {
+      addStr(`Connection with ${address} is established.`);
+      const command = {
+        opt: 'ansiColorsToHtml',
+        val: true,
+      };
+      sendCommand(ws, command);
+    });
+
+    ws.addEventListener('close', function (event) {
+      addStr(`Connection with ${address} is closed: ${event.code} ${event.reason}.`);
+      setTimeout(startWorld, 3000);
+    });
+
+    // Seems like you can not prevent error logs to console for refused connections.
+    // https://stackoverflow.com/questions/22919638/can-i-catch-the-cant-establish-a-connection-error-for-a-failed-websocket-conn
+//    ws.addEventListener('error', function (event) {
+//      addStr(`Error from ${address}: ${event}`);
+//      return true;
+//    });
+
+    ws.addEventListener('message', function (event) {
+      addStr(event.data);
+    });
+  }
+
+  //  window.onerror = function(message, url, lineNumber) {
+  //    // code to execute on an error
+  //    console.log(message);
+  //    return true; // prevents browser error messages
+  //  };
+
+  startWorld();
+
+
+</script>
+
+</body>
+</html>
