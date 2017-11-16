@@ -1,0 +1,15 @@
+{
+  "preset": "airbnb",
+  "safeContextKeyword": [
+    "self"
+  ],
+  "fileExtensions": [
+    ".js"
+  ],
+  "excludeFiles": [
+    "node_modules/**",
+    "logs/**"
+  ],
+  "maxErrors":-1,
+  "maximumLineLength" : null
+}
