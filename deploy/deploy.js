@@ -16,3 +16,6 @@ try {
   log.error(err);
 }
 
+// git rev-parse 3.3-test
+// git ls-remote origin -h refs/heads/3.3-test
+// ? git remote update

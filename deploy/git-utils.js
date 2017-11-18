@@ -39,6 +39,11 @@ exports.pull = function pull(args = {}) {
 
   const result = {};
 
+  const prefixes = args.pathPrefixes.slice();
+  prefixes.forEach((prefix) => {
+    result[prefix] = false;
+  });
+
   out = cp.execSync(`git diff --name-only origin/${cfg.branch}`).toString();
   log.silly(`out from git dif: \n${out}`);
 
@@ -50,12 +55,6 @@ exports.pull = function pull(args = {}) {
   } else if (!Array.isArray(args.pathPrefixes)) {
     throw new Error('pathPrefixes is not array.');
   } else {
-    const prefixes = args.pathPrefixes.slice();
-
-    prefixes.forEach((prefix) => {
-      result[prefix] = false;
-    });
-
     result.changedFiles.forEach((file) => {
       for (let i = 0; i < prefixes.length; i++) { // eslint-disable-line no-plusplus
         if (file.startsWith(prefixes[i])) {

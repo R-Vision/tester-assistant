@@ -8,4 +8,6 @@ const path = require('path');
 module.exports = {
   branch: 'master',
   prjRoot: path.resolve(__dirname, '../..'), // TODO: change it when dz-deploy will be in a separated repo.
+
+  remoteRepoCheckInterval: 180, // Seconds. Time interval between check for updates in remote repo.
 };
