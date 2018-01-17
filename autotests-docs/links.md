@@ -33,6 +33,7 @@
 
 Хороший доклад про тестируемый код.
 * https://www.youtube.com/watch?v=c5ExGryXXos
+
 Текстовый вариант.
 * https://habrahabr.ru/company/jugru/blog/341944/
 
