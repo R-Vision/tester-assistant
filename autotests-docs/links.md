@@ -1,3 +1,6 @@
+# База знаний в нашем confluence.
+https://cip.rvision.pro/pages/viewpage.action?pageId=328042
+
 # Автотесты
 
 Зачем нужны автотесты.
@@ -41,8 +44,11 @@ https://www.youtube.com/watch?v=LUtwsEy-NpE
 Хороший доклад про уменьшение связности.
 https://www.youtube.com/watch?v=yRo-9qvF6EI
 
-Вот здесь просто и коротко о SOLID рассказыют:
+Вот здесь просто и коротко о SOLID рассказыют.
 https://www.youtube.com/watch?v=EaF1fHQIe0Y&list=PLoonZ8wII66jOXzIvQCtKosCstjGPL0lg
+
+Среднего качества доклад о SOLID в JS.
+https://www.youtube.com/watch?v=wi3wPzReKZQ
 
 О чистом коде.
 https://www.youtube.com/watch?v=otrfSgeK3JI
