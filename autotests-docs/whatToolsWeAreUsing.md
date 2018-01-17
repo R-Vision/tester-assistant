@@ -49,7 +49,7 @@ test('adds 1 + 2 to equal 3', () => {
 });
 ```
 
-## TDD assertions only.
+## По возможности, TDD assertions only.
 
 Многие из нас думают, что TDD style проще для понимания и запоминания ассершнов.
 
