@@ -55,7 +55,8 @@ test('adds 1 + 2 to equal 3', () => {
 });
 ```
 
-Можете юзать `debug-assert`. Это мой npm модуль. К нему есть d.ts.
+Можете юзать [debug-assert](https://www.npmjs.com/package/debug-assert).
+Это мой npm модуль. К нему есть d.ts.
 Вообще, задачка assert либы - выкинуть exception, если что-то пошло не так.
 
 ## Асинхронные тесты.
