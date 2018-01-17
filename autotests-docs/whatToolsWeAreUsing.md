@@ -62,6 +62,25 @@ test('adds 1 + 2 to equal 3', () => {
 Можете юзать `debug-assert`. Это мой npm модуль. К нему есть d.ts.
 Вообще, задачка assert либы - выкинуть exception, если что-то пошло не так.
 
+## Асинхронные тесты.
+
+https://facebook.github.io/jest/docs/en/asynchronous.html
+
+```js
+test('the data is peanut butter', done => {
+  function callback(data) {
+    expect(data).toBe('peanut butter');
+    done();
+  }
+
+  fetchData(callback);
+});
+```
+
+Ещё про асинхронные тесты.
+
+https://facebook.github.io/jest/docs/en/tutorial-async.html
+
 # Как запускать тесты.
 
 Можно сделать себе такой шелл скрипт:
