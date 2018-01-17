@@ -3,11 +3,11 @@
 ## Как примерно выглядит интеграция автотестов с билдами бамбу.
 
 Это билд для development ветки коллектора и 3.4 ветки smp.
-https://bdeps.rvision.pro/browse/RV-AT
+* https://bdeps.rvision.pro/browse/RV-AT
 
 Здесь можно посмотреть конкретный репорт от автотестов.
 
-https://bdeps.rvision.pro/browse/RV-AT-JOB1-145/test
+* https://bdeps.rvision.pro/browse/RV-AT-JOB1-145/test
 
 Обратите внимание на закладки 'Failed tests', 'Successful tests'.
 
