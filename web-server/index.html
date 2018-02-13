@@ -25,6 +25,9 @@
 
 <script type="text/javascript">
 
+  let urlParams = new URLSearchParams(window.location.search);
+  let ip = urlParams.get('ip');
+
   const mainDiv = document.getElementById('mainDiv');
 
   function addStr(str) {
@@ -38,12 +41,18 @@
 
     window.scrollTo(0, document.body.scrollHeight);
   }
+  
+  if (!ip) {
+    console.error('Incorrect IP');
+    addStr('PLEASE, use ?ip=10.8.0.22 or smth like!');
+    throw new Error('Incorrect IP');
+  }
 
   function sendCommand(ws, cmd) {
     ws.send(JSON.stringify(cmd));
   }
 
-  const address = 'ws://10.8.0.22:3051';
+  const address = 'ws://' + ip + ':3051';
 
   //  const address = 'ws://127.0.0.1:3051';
 
