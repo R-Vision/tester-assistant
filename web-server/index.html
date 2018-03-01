@@ -14,6 +14,22 @@
       border: 0;
       padding: 0;
       margin: 0.5em;
+      text-indent: 30px;
+    }
+
+    h3 {
+      border: 0;
+      padding: 0;
+      margin: 1em;
+      text-indent: 0px;
+    }
+
+    .prefix {
+      color: red;
+    }
+
+    .date {
+      color: green;
     }
   </style>
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
@@ -30,6 +46,16 @@
 
   const mainDiv = document.getElementById('mainDiv');
 
+  function onClick(event) {
+    const x = event.clientX, y = event.clientY,
+      elementMouseIsOver = document.elementFromPoint(x, y);
+
+    // Если этот элемент h3 - найти сиблинг div, и поменять у него hidden или display.
+
+  }
+
+  mainDiv.addEventListener('click', onClick);
+
   function addStr(str) {
     const p = document.createElement('p');
 
@@ -41,7 +67,69 @@
 
     window.scrollTo(0, document.body.scrollHeight);
   }
-  
+
+  function colorPrefix(str) {
+
+    const colonIndex = str.indexOf(':');
+    if (colonIndex === -1) {
+      console.error('Incorrect colorPrefix call');
+      return str;
+    }
+
+    const prefix = str.slice(0, colonIndex);
+    const otherPart = str.slice(colonIndex);
+    const coloredPrefix = '<span class="prefix">' + prefix + '</span>';
+
+    return coloredPrefix + otherPart;
+  }
+
+  function colorDate(str) {
+
+    const dateRe = /\d+-\d+-\d+\s+\d+:\d+:\d+/;
+
+    const found = str.match(dateRe);
+
+    if (!found) return str;
+
+    const dateStr = found[0];
+    const dateIndex = str.indexOf(dateStr);
+
+    const strBefore = str.slice(0, dateIndex);
+    const strAfter = str.slice(dateIndex + dateStr.length);
+
+    const coloredDateStr = '<span class="date">' + dateStr + '</span>';
+
+    return strBefore + coloredDateStr + strAfter;
+  }
+
+  function addChunk(str) {
+
+    const arr = str.split('\n');
+
+    const div = document.createElement('div');
+
+    const h3 = document.createElement('h3');
+
+    const firstString = colorDate(colorPrefix(arr.shift()));
+
+    h3.innerHTML = firstString;
+
+    div.appendChild(h3);
+
+    const innerDiv = document.createElement('div');
+    innerDiv.style.display = 'none';
+
+    arr.forEach(function (item) {
+      const p = document.createElement('p');
+      p.innerHTML = str;
+      innerDiv.appendChild(p);
+    });
+
+    div.appendChild(innerDiv);
+    mainDiv.appendChild(div);
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
   if (!ip) {
     console.error('Incorrect IP');
     addStr('PLEASE, use ?ip=10.8.0.22 or smth like!');
@@ -81,7 +169,7 @@
 //    });
 
     ws.addEventListener('message', function (event) {
-      addStr(event.data);
+      addChunk(event.data);
     });
   }
 

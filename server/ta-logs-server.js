@@ -28,20 +28,30 @@ const wss = new WebSocket.Server({ port: serverCfg.port });
 /**
  *
  * @param {Object} args
- * @param {String} args.str - строка для лога.
- * @param {Number} args.curStrLogLevel - уровень лога для этой строки.
+ * @param {String} args.chunk - чанк для лога.
+ * @param {String} args.prefix - префикс, откуда лог.
+ * @param {Number} args.logLevel - уровень лога для этой строки.
  * @param {Boolean} args.isStdout - true если stdout лог, false - если stderr лог.
  */
-function sendStr(args) {
+function sendChunk(args) {
   // process.stdout.write(`${args.str}\n`); // for debug.
 
-  if (args.str !== '') {
+  if (args.chunk.length !== 0) {
+    args.chunk[0] = `${args.prefix}${args.chunk[0]}`; // eslint-disable-line no-param-reassign
+
+    let str = args.chunk.join('\n');
+
+    // if (args.logLevel < 3) {
+    //   console.log('Str for send: ');
+    //   console.log(str);
+    // }
+
     wss.clients.forEach((client) => {
-      if (!args.isStdout || args.curStrLogLevel <= client.minLogLevel) {
+      if (!args.isStdout || args.logLevel <= client.minLogLevel) {
         if (client.ansiColorsToHtml) {
-          args.str = convertAnsiColors.toHtml(args.str); // eslint-disable-line no-param-reassign
+          str = convertAnsiColors.toHtml(str);
         }
-        wsWrapper.send(client, args.str);
+        wsWrapper.send(client, str);
       }
     });
   }
@@ -70,7 +80,7 @@ wss.on('connection', (ws, req) => {
   });
 });
 
-parsers.startWatchers(sendStr);
+parsers.startWatchers(sendChunk);
 
 log.info('ta-logs-server started.');
 
