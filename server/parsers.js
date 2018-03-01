@@ -22,7 +22,7 @@ exports.logLevels = [
   'silly',
 ];
 
-let sendStr; // Функция для посылки строки клиентам.
+let sendChunk; // Функция для посылки строки клиентам.
 exports.checkLevel = function checkLevel(level) {
   if (level < 0 || level > 5) {
     throw new Error(`Incorrect log level: ${level}`);
@@ -53,12 +53,27 @@ function getLogLevel(str) {
 // И ещё вот такой формат бывает:
 // .[34mdebug: .[39m
 
+  const timestampRE = /^(\d+-\d+-\d+\s+\d+:\d+:\d+)\s*:\s+/;
+  const foundTS = str.match(timestampRE);
+  let strWOTS = str;
+  if (foundTS) {
+    // console.log(`TS: ${foundTS[0]}`);
+    strWOTS = str.slice(foundTS[0].length);
+  }
+
+  const colonIndex = strWOTS.indexOf(':');
+  if (colonIndex === -1) {
+    return undefined;
+  }
+
+  const strWithLogLevel = strWOTS.slice(0, colonIndex);
+
   const reRemoveColors = /\x1b\[\d{2}m/g; // eslint-disable-line no-control-regex
-  const strWOColorsLc = str.replace(reRemoveColors, '').toLowerCase();
+  const strWOColorsLc = strWithLogLevel.replace(reRemoveColors, '').toLowerCase();
 
   for (let i = 0; i < exports.logLevels.length; i++) { // eslint-disable-line no-plusplus
     const strLevel = exports.logLevels[i];
-    if (strWOColorsLc.indexOf(`${strLevel}:`) !== -1) {
+    if (strWOColorsLc.indexOf(strLevel) === 0) {
       return i;
     }
   }
@@ -81,6 +96,10 @@ function getLogLevelByColors(str) { // eslint-disable-line no-unused-vars
   return m[1];
 }
 
+function filterStr(str) {
+  return !serverCfg.excludeNodeModulesFromStackTrace || str.indexOf('node_modules') === -1;
+}
+
 /**
  *
  * Создает процесс с вотчером лога.
@@ -97,30 +116,67 @@ function startLogWatcher(args) {
   const key = args.isStdout ? 'outWatcher' : 'errWatcher';
 
   const watcher = {
-    prevStrLogLevel: undefined, // Уровень логирования для предыдущей строки.
+    chunk: [],
+    timerId: null,
+    logLevel: undefined, // Уровень логирования для предыдущей строки.
     isStdout: args.isStdout, // stdout или stderr.
     // Префикс для логов, чтобы показывать процесс - источник лога.
     prefix: `${args.procName}-${args.isStdout ? 'out' : 'err'}: `,
 
-    handleData(data) {
-      // TODO: Filter the data and broadcast data to subscribers.
-      const dataArr = data.split('\n');
+    // Отправить старые чанки. Начать новый чанк.
+    startNewChunk(str) {
+      this.sendChunk();
+      this.chunk = [str];
+    },
 
+    addToChunk(str) {
+      if (this.chunk.length === 0) return;
+      this.chunk.push(str);
+    },
+
+    sendChunk() {
+      if (sendChunk && this.chunk.length > 0) {
+        sendChunk({
+          chunk: this.chunk,
+          prefix: this.prefix,
+          logLevel: this.logLevel,
+          isStdout: this.isStdout,
+        });
+      }
+      this.chunk = [];
+      this.logLevel = undefined;
+      if (this.timerId !== null) {
+        clearTimeout(this.timerId);
+        this.timerId = null;
+      }
+    },
+
+    resetTimeOut() {
+      clearTimeout(this.timerId);
+      const self = this;
+      this.timerId = setTimeout(() => {
+        self.sendChunk();
+        self.timerId = null;
+      }, serverCfg.msToSendChunk);
+    },
+
+    handleData(data) {
+      const dataArr = data.split('\n').filter(filterStr);
+      let curStrLogLevel;
       dataArr.forEach((str) => {
         // console.log(str); // Uncomment for debugging, e.g. for filters testing.
         if (str !== '') {
-          let curStrLogLevel = getLogLevel(str);
+          curStrLogLevel = getLogLevel(str);
           if (typeof curStrLogLevel === 'undefined') {
-            curStrLogLevel = this.prevStrLogLevel;
+            this.addToChunk(str);
           } else {
-            this.prevStrLogLevel = curStrLogLevel;
-          }
-
-          if (sendStr) {
-            sendStr({ str: this.prefix + str, curStrLogLevel, isStdout: this.isStdout });
+            this.startNewChunk(str);
+            this.logLevel = curStrLogLevel;
           }
         }
       });
+
+      this.resetTimeOut();
     },
   };
 
@@ -179,11 +235,11 @@ function delay() {
 }
 
 /**
- * @param {Function} argSendStr.
+ * @param {Function} argSendChunk.
  * @return {Promise.<T>|*}
  */
-exports.startWatchers = function startWatchers(argSendStr) {
-  sendStr = argSendStr;
+exports.startWatchers = function startWatchers(argSendChunk) {
+  sendChunk = argSendChunk;
 
   return delay()
     .then(getLogPaths)
