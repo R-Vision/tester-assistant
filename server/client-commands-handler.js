@@ -15,9 +15,9 @@ const optHandlers = {
     log.info(`minLogLevel: ${parsers.logLevels[ws.minLogLevel]} -> ${parsers.logLevels[val]}`);
     ws.minLogLevel = val; // eslint-disable-line no-param-reassign
   },
-  ansiColorsToHtml(val, ws) {
-    log.info(`ansiColorsToHtml: ${ws.ansiColorsToHtml} -> ${val}`);
-    ws.ansiColorsToHtml = val; // eslint-disable-line no-param-reassign
+  htmlMode(val, ws) {
+    log.info(`htmlMode: ${ws.htmlMode} -> ${val}`);
+    ws.htmlMode = val; // eslint-disable-line no-param-reassign
   },
 };
 

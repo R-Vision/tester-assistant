@@ -159,7 +159,7 @@
     ws.addEventListener('open', function (event) {
       addStr(`Connection with ${address} is established.`);
       const command = {
-        opt: 'ansiColorsToHtml',
+        opt: 'htmlMode',
         val: true,
       };
       sendCommand(ws, command);
