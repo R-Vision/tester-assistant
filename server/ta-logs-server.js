@@ -4,8 +4,6 @@
 
 // Этот скрипт запускается на серверах и открывает вебсокеты на порту 3051.
 
-// const convertAnsiColorsToHtml = (new require('ansi-to-html')()).toHtml;
-
 const Convert = require('ansi-to-html');
 
 const convertAnsiColors = new Convert({
@@ -24,6 +22,14 @@ const parsers = require('./parsers.js');
 const handleClientCommand = require('./client-commands-handler.js');
 
 const wss = new WebSocket.Server({ port: serverCfg.port });
+
+function escapeLtGt(str) {
+  const lTRE = /</g;
+  const gTRE = />/g;
+  str = str.replace(lTRE, '&lt;');
+  str = str.replace(gTRE, '&gt;');
+  return str;
+}
 
 /**
  *
@@ -48,7 +54,8 @@ function sendChunk(args) {
 
     wss.clients.forEach((client) => {
       if (!args.isStdout || args.logLevel <= client.minLogLevel) {
-        if (client.ansiColorsToHtml) {
+        if (client.htmlMode) {
+          str = escapeLtGt(str);
           str = convertAnsiColors.toHtml(str);
         }
         wsWrapper.send(client, str);
@@ -60,7 +67,7 @@ function sendChunk(args) {
 wss.on('connection', (ws, req) => {
   ws.ip = req.connection.remoteAddress; // eslint-disable-line no-param-reassign
 
-  ws.ansiColorsToHtml = serverCfg.ansiColorsToHtml; // eslint-disable-line no-param-reassign
+  ws.htmlMode = serverCfg.htmlMode; // eslint-disable-line no-param-reassign
 
   // С какого уровня посылать логи этому клиенту.
   ws.minLogLevel = serverCfg.defaultMinLogLevel; // eslint-disable-line no-param-reassign
