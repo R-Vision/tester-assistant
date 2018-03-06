@@ -13,6 +13,6 @@
     "dz-promise-utils": "^0.1.2",
     "javascript-stringify": "^1.6.0",
     "winston": "^2.4.0",
-    "ws": "^3.3.1"
+    "ws": "^3.3.3"
   }
 }
