@@ -12,9 +12,9 @@
 ### END INIT INFO
 
 SERVICE_NAME=ta-web-server
-EXECUTABLE=/home/jenkins/utils/ta-web-server
+EXECUTABLE=/home/jenkins/utils/web-server/ta-web-server
 EXECUTABLE_ARGS="--arg1 --arg2"
-PIDFILE=/home/jenkins/utils/ta-web-server.pid
+PIDFILE=$EXECUTABLE.pid
 
 case "$1" in
   start)
