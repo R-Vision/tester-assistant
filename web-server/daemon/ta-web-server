@@ -1,0 +1,40 @@
+#! /bin/sh
+# /etc/init.d/ta-web-server
+
+### BEGIN INIT INFO
+# Provides: ta-web-server
+# Required-Start: $local_fs $remote_fs
+# Required-Stop:
+# X-Start-Before:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: Web Server for Tester Assistant
+### END INIT INFO
+
+SERVICE_NAME=ta-web-server
+EXECUTABLE=/home/jenkins/utils/ta-web-server
+EXECUTABLE_ARGS="--arg1 --arg2"
+PIDFILE=/home/jenkins/utils/ta-web-server.pid
+
+case "$1" in
+  start)
+    echo -n "Starting $SERVICE_NAME"
+    start-stop-daemon --start --chuid jenkins --pidfile $PIDFILE --make-pidfile --background --exec $EXECUTABLE -- $EXECUTABLE_ARGS
+    echo "."
+    ;;
+  stop)
+    echo -n "Stopping $SERVICE_NAME"
+    start-stop-daemon --stop --chuid jenkins --pidfile $PIDFILE
+    echo "."
+    ;;
+  restart)
+    $0 stop
+    sleep 2
+    $0 start
+    ;;
+  *)
+        echo "Usage: /etc/init.d/$SERVICE_NAME {start|stop|restart}"
+        exit 1
+esac
+
+exit 0
