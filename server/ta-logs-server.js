@@ -45,7 +45,7 @@ function sendChunk(args) {
   if (args.chunk.length !== 0) {
     args.chunk[0] = `${args.prefix}${args.chunk[0]}`; // eslint-disable-line no-param-reassign
 
-    let str = args.chunk.join('\n');
+    const str = args.chunk.join('\n');
 
     // if (args.logLevel < 3) {
     //   console.log('Str for send: ');
@@ -54,11 +54,12 @@ function sendChunk(args) {
 
     wss.clients.forEach((client) => {
       if (!args.isStdout || args.logLevel <= client.minLogLevel) {
+        let clientStr = str;
         if (client.htmlMode) {
-          str = escapeLtGt(str);
-          str = convertAnsiColors.toHtml(str);
+          clientStr = escapeLtGt(str);
+          clientStr = convertAnsiColors.toHtml(clientStr);
         }
-        wsWrapper.send(client, str);
+        wsWrapper.send(client, clientStr);
       }
     });
   }
