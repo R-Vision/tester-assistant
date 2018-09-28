@@ -47,7 +47,7 @@
   const mainDiv = document.getElementById('mainDiv');
 
   function onClick(event) {
-    if (event.shiftKey || event.ctrlKey) {
+    if (!event.ctrlKey) {
       return;
     }
     let el = document.elementFromPoint(event.clientX, event.clientY);
