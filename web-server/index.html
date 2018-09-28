@@ -47,6 +47,9 @@
   const mainDiv = document.getElementById('mainDiv');
 
   function onClick(event) {
+    if (event.shiftKey || event.ctrlKey) {
+      return;
+    }
     let el = document.elementFromPoint(event.clientX, event.clientY);
     while(el && !el.classList.contains('chunk')) {
       el = el.parentElement;
