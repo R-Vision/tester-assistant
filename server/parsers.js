@@ -37,6 +37,13 @@ exports.getLogLevelIndexByStr = function getLogLevelIndexByStr(strLevel) {
   return ind;
 };
 
+const regExpToLevel = [
+  [/DeprecationWarning:/, 1],
+  [/error: RequestError:/, 0],
+  [/\(node:\d+\).*Error/, 0],
+  [/\(node:\d+\).*Warning/, 1],
+];
+
 /**
  * Достает из строки уровень логирования.
  * @param str - строка из лога.
@@ -64,6 +71,13 @@ function getLogLevel(str) {
   const colonIndex = strWOTS.indexOf(':');
   if (colonIndex === -1) {
     return undefined;
+  }
+
+  for (let regExpIndex = 0; regExpIndex < regExpToLevel.length; regExpIndex++) {
+    const [re, level] = regExpToLevel[regExpIndex];
+    if (re.test(strWOTS)) {
+      return level;
+    }
   }
 
   const strWithLogLevel = strWOTS.slice(0, colonIndex);

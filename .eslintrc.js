@@ -32,6 +32,7 @@ module.exports = {
     ],
 
     'function-paren-newline': 0,
+    'no-plusplus': 0,
 
   },
   globals: {
